@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Madam Ji ❤️ Quiz</title>
+<style>
+  :root { --pink:#ff3b78; --deep:#8e123d; --ink:#ffe3ed; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; font-family:system-ui,-apple-system,Segoe UI,sans-serif; color:var(--ink); display:flex; align-items:center; justify-content:center; padding:22px 14px; overflow-x:hidden;
+    background: radial-gradient(ellipse at top, #4a0823 0%, #210311 58%, #120109 100%); background-size:cover; }
+  body::before { content:'❤️ 💗 💖 💕 💘 💓 💞 ❤️ 💗 💖 💕'; position:fixed; inset:-10px; z-index:-1; opacity:.16; font-size:clamp(26px,5vw,54px); line-height:1.8; letter-spacing:15px; overflow:hidden; word-break:break-all; transform:rotate(-8deg) scale(1.15); pointer-events:none; }
+  .hearts { position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:-1; }
+  .hearts span { position:absolute; animation:float 8s linear infinite; opacity:.42; filter:drop-shadow(0 3px 7px #ff174f55); }
+  @keyframes float { from { transform:translateY(110vh) rotate(0); } to { transform:translateY(-15vh) rotate(25deg); } }
+  .app { width:min(100%,430px); }
+  .topline { display:flex; align-items:center; justify-content:space-between; color:white; font-weight:800; margin:0 2px 12px; text-shadow:0 2px 4px #79001d; }
+  .counter { background:rgba(70,12,37,.9); color:#ffdce8; border:1px solid #ff4f8a; border-radius:999px; padding:9px 14px; box-shadow:0 4px 12px #65001c55; }
+  .card { background:linear-gradient(155deg,rgba(70,17,43,.97),rgba(34,7,24,.98)); border:1px solid #9e315c; border-radius:30px; padding:clamp(24px,6vw,34px) clamp(19px,6vw,28px); box-shadow:0 18px 45px #0008, inset 0 1px 0 #ffffff12; text-align:center; }
+  .heart-art { font-size:70px; line-height:1.2; margin-bottom:8px; animation:beat 1.3s infinite; }
+  @keyframes beat { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+  h1 { font-size:clamp(27px,7vw,34px); line-height:1.2; margin:8px 0 12px; }
+  .intro { font-size:19px; line-height:1.55; margin:0 0 23px; }
+  .pill { display:inline-block; background:linear-gradient(135deg,#702044,#4a102d); color:#ffd9e7; border:1px solid #a43a64; font-weight:800; padding:8px 18px; border-radius:999px; margin-bottom:15px; }
+  h2 { font-size:clamp(23px,6vw,29px); line-height:1.35; margin:5px 0 22px; }
+  input { width:100%; border:1.5px solid #a94b70; border-radius:16px; padding:15px 14px; font-size:17px; outline:none; background:#260b1a; color:#ffe6ef; }
+  input::placeholder { color:#c18ca2; }
+  input:focus { border-color:var(--pink); box-shadow:0 0 0 4px #ff2f6325; }
+  button { width:100%; border:0; border-radius:15px; padding:15px 18px; font-size:18px; font-weight:800; cursor:pointer; margin-top:14px; color:white; background:linear-gradient(135deg,#ff5689,#d51d59); box-shadow:0 6px 18px #ff1c5b35; transition:transform .18s,filter .18s; border-radius:999px; }
+  button:active { transform:scale(.985); filter:brightness(1.08); }
+  .feedback { margin-top:17px; border-radius:15px; padding:13px; font-weight:750; line-height:1.45; }
+  .correct { background:#103b2b; border:1px solid #32c985; color:#9bffd0; }
+  .wrong { background:#451226; border:1px solid #ff5278; color:#ffb5c6; }
+  .hidden { display:none !important; }
+  .small { font-size:14px; opacity:.8; margin-top:17px; }
+  .finish-score { font-size:48px; font-weight:900; color:#ff6e9f; margin:8px 0; }
+  .love-note { background:#fff0f4; border:1px solid #ffc0d0; border-radius:17px; padding:15px; margin-top:18px; line-height:1.6; }
+  @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+<div class="hearts" id="hearts" aria-hidden="true"></div>
+<main class="app">
+  <div class="topline"><span>💘 Madam Ji Quiz</span><span class="counter" id="counter">❤️ 0/5 correct</span></div>
+  <section class="card" id="welcome">
+    <div class="heart-art">💗💞</div>
+    <h1>Chlo madam ji ❤️</h1>
+    <p class="intro">aaj dekhte hai aapko mere bare me kya kya pta hai 🥰</p>
+    <button id="startBtn">Start ❤️ ➜</button>
+    <p class="small">Bas 5 cute se questions hain, madam ji!</p>
+  </section>
+  <section class="card hidden" id="quiz" aria-live="polite">
+    <div class="pill" id="questionNumber">Question 1 of 5</div>
+    <h2 id="questionText">Mera pura naam kya hai?</h2>
+    <form id="answerForm">
+      <input id="answer" type="text" placeholder="Apna answer likho..." autocomplete="off" required aria-label="Your answer" />
+      <button type="submit" id="submitBtn">Submit 💌</button>
+    </form>
+    <div id="feedback" class="feedback hidden" role="status"></div>
+    <p class="small" id="hint">Answer ke baad next question apne aap aayega 💗</p>
+  </section>
+  <section class="card hidden" id="finish">
+    <div class="heart-art">🥰💖</div>
+    <h1>Quiz Complete, Madam Ji!</h1>
+    <div class="finish-score" id="finalScore">0/5</div>
+    <p class="intro" id="finalMessage">Dekhte hain aap mujhe kitna jaanti ho ❤️</p>
+    <button id="againBtn">Play Again 💞</button>
+  </section>
+</main>
+<script>
+  const questions = [
+    { q: 'Mera pura naam kya hai?', answers: ['ankush panwar', 'ankushpanwar'] },
+    { q: 'Mera favourite colour konsa hai?', answers: ['red', 'laal', 'लाल'] },
+    { q: 'Mera sabse favourite kon hai?', answers: ['mai', 'main', 'me', 'myself', 'mai or me', 'me or mai', 'ankush', 'ankush panwar', 'मैं', 'मैं ही'] },
+    { q: 'Meri mummy ka kya naam hai?', answers: ['anju', 'अंजू'] },
+    { q: 'Mai 4 baje ke baad kahan jata hun?', answers: ['ground', 'ground pe', 'ground par', 'the ground', 'मैदान', 'ग्राउंड', 'ग्राउंड पे'] }
+  ];
+  let current = 0, score = 0, locked = false;
+  const $ = id => document.getElementById(id);
+  const normalize = value => value.toLocaleLowerCase('en').trim().replace(/[.!?,।]/g, '').replace(/\s+/g, ' ');
+  function updateCounter() { $('counter').textContent = `❤️ ${score}/5 correct`; }
+  function showQuestion() {
+    locked = false;
+    $('questionNumber').textContent = `Question ${current + 1} of 5`;
+    $('questionText').textContent = questions[current].q;
+    $('answer').value = '';
+    $('answer').disabled = false;
+    $('submitBtn').disabled = false;
+    $('submitBtn').textContent = 'Submit 💌';
+    $('feedback').className = 'feedback hidden';
+    $('hint').textContent = 'Answer ke baad next question apne aap aayega 💗';
+    $('answer').focus({ preventScroll: true });
+  }
+  function start() {
+    current = 0; score = 0; updateCounter();
+    $('welcome').classList.add('hidden'); $('finish').classList.add('hidden'); $('quiz').classList.remove('hidden');
+    showQuestion();
+  }
+  $('startBtn').addEventListener('click', start);
+  $('againBtn').addEventListener('click', start);
+  $('answerForm').addEventListener('submit', event => {
+    event.preventDefault();
+    if (locked) return;
+    const value = normalize($('answer').value);
+    if (!value) { $('answer').focus(); return; }
+    locked = true;
+    const isCorrect = questions[current].answers.some(a => normalize(a) === value);
+    const feedback = $('feedback');
+    feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'wrong');
+    if (isCorrect) {
+      score++;
+      feedback.textContent = '✅ Sahi jawab, madam ji! 💚';
+    } else {
+      feedback.textContent = '❌ Oho, galat jawab! ❤️ Sahi jawab: ' + questions[current].answers[0];
+    }
+    updateCounter();
+    $('answer').disabled = true;
+    $('submitBtn').disabled = true;
+    $('submitBtn').textContent = 'Next question loading…';
+    $('hint').textContent = 'Agla question aa raha hai… 💞';
+    window.setTimeout(() => {
+      current++;
+      if (current < questions.length) showQuestion();
+      else {
+        $('quiz').classList.add('hidden'); $('finish').classList.remove('hidden');
+        $('finalScore').textContent = `${score}/5`;
+        $('finalMessage').textContent = score === 5 ? 'Waah madam ji! Aapko mere baare mein sab kuch pata hai! ❤️🥹' : `Aapke ${score} answers sahi the. Koi baat nahi, madam ji! ❤️`;
+      }
+    }, 1300);
+  });
+  // Decorative floating hearts
+  const heartBox = $('hearts');
+  const heartTypes = ['❤️','💗','💖','💕','💘','💓'];
+  for (let i = 0; i < 24; i++) {
+    const heart = document.createElement('span');
+    heart.textContent = heartTypes[i % heartTypes.length];
+    heart.style.left = (i * 37 % 100) + '%';
+    heart.style.fontSize = (17 + (i * 11 % 25)) + 'px';
+    heart.style.animationDelay = -(i % 8) + 's';
+    heart.style.animationDuration = (7 + i % 6) + 's';
+    heartBox.appendChild(heart);
+  }
+</script>
+</body>
+</html>
